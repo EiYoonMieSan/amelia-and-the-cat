@@ -1,8 +1,10 @@
+const scene = document.getElementById("scene");
+
 const person = document.getElementById("person");
 const cat = document.getElementById("cat");
 
-const nextButton = document.getElementById("next-button");
-const talkButton = document.getElementById("talk-button");
+//const nextButton = document.getElementById("next-button");
+//const talkButton = document.getElementById("talk-button");
 
 const speechBubble = document.getElementById("speech-bubble");
 
@@ -32,64 +34,76 @@ let currentCatFrame = 0;
 let walking = false;
 let position = -20;
 
+let sceneStep = 0;
+let animationRunning = false;
 
-nextButton.addEventListener("click", () => {
-	
-    talkButton.addEventListener("click", () => {
+scene.addEventListener("click", () => {
 
-    speechBubble.style.display = "block";
+	// Don't allow another click while animation is happening
+    if (animationRunning) {
+        return;
+    }
+    
+    // first click
+    if (sceneStep === 0) {
+    	animationRunning = true;
+    	sceneStep = 1;
+    	    
+    	const walkAnimation = setInterval(() => {
 
-});
-
-    if (walking) return;
-
-    walking = true;
-
-    const walkAnimation = setInterval(() => {
-
-        // Change walking frame
-        person.src = walkingFrames[currentWalkFrame];
+    	    // Change walking frame
+    	    person.src = walkingFrames[currentWalkFrame];
         
-        currentWalkFrame++;
+    	    currentWalkFrame++;
 
-        if (currentWalkFrame >= walkingFrames.length) {
-            currentWalkFrame = 0;
-        }
+    	    if (currentWalkFrame >= walkingFrames.length) {
+    	        currentWalkFrame = 0;
+    	    }
         
 
         // Move person to the right
-        position += 1;
-        person.style.left = position + "%";
+        	position += 1;
+        	person.style.left = position + "%";
 
         // Stop when person reaches the middle
-        if (position >= 45) {
-            clearInterval(walkAnimation);
+        	if (position >= 45) {
+        	    clearInterval(walkAnimation);
             
             // Amelia stops and looks at the wall
-            person.src = "images/Amelia_idle_1.png";
+            	person.src = "images/Amelia_idle_1.png";
             
             // Wait 1 second, then reveal the cat
-    	    setTimeout(() => {
-        	cat.style.display = "block";
+    	    	setTimeout(() => {
+        		cat.style.display = "block";
         	
         	// Start cat animation
-        	const catAnimation = setInterval(() => {
-		    cat.src = catFrames[currentCatFrame];
-		    currentCatFrame++;
+        		const catAnimation = setInterval(() => {
+  	   		    cat.src = catFrames[currentCatFrame];
+			    currentCatFrame++;
 
-		    if (currentCatFrame >= catFrames.length) {
-		        clearInterval(catAnimation);
+			// cat finished
+		   	 if (currentCatFrame >= catFrames.length) {
+		        	clearInterval(catAnimation);
 		        
-		        talkButton.style.display = "inline-block";
-    		    }
-		}, 400);
-    	}, 2500);
-    
-            
-            walking = false;
-        }
+		        	//animation is finally finished
+		        	animationRunning = false;
+		        	
+		        	//now the next click is allowed
+		        	sceneStep = 2;
+    		    		}
+			}, 400);
+    		}, 2500);
+    	}
 
     }, 120);
+    	
+    }
+ 	//second click
+ 	else if (sceneStep === 2) {
+ 	speechBubble.style.display = "block";
 
-
+        // Don't trigger the bubble again
+        sceneStep = 3;
+ 	}
+	
 });
