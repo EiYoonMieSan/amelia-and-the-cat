@@ -1,12 +1,14 @@
 const scene = document.getElementById("scene");
 
 const person = document.getElementById("person");
+
 const cat = document.getElementById("cat");
+const cat1Arm = document.getElementById("cat-1-arm");
+const cat2Arm = document.getElementById("cat-2-arm");
 
-//const nextButton = document.getElementById("next-button");
-//const talkButton = document.getElementById("talk-button");
+const speechBubbleRight = document.getElementById("speech-bubble-right");
+const speechBubbleLeft = document.getElementById("speech-bubble-left");
 
-const speechBubble = document.getElementById("speech-bubble");
 
 const walkingFrames = [
     "images/Amelia_run_left_1.png",
@@ -31,11 +33,11 @@ const catFrames = [
 let currentWalkFrame = 0;
 let currentCatFrame = 0;
 
-let walking = false;
 let position = -20;
 
 let sceneStep = 0;
 let animationRunning = false;
+
 
 scene.addEventListener("click", () => {
 
@@ -44,7 +46,11 @@ scene.addEventListener("click", () => {
         return;
     }
     
-    // first click
+    // =========================================
+    // FIRST CLICK
+    // Amelia walks in + cat appears
+    // =========================================
+
     if (sceneStep === 0) {
     	animationRunning = true;
     	sceneStep = 1;
@@ -72,16 +78,16 @@ scene.addEventListener("click", () => {
             // Amelia stops and looks at the wall
             	person.src = "images/Amelia_idle_1.png";
             
-            // Wait 1 second, then reveal the cat
+            // Wait 2.5 second, then reveal the cat
     	    	setTimeout(() => {
         		cat.style.display = "block";
         	
-        	// Start cat animation
+        	// Start cat appearance animation
         		const catAnimation = setInterval(() => {
   	   		    cat.src = catFrames[currentCatFrame];
 			    currentCatFrame++;
 
-			// cat finished
+			// cat finished appearing 
 		   	 if (currentCatFrame >= catFrames.length) {
 		        	clearInterval(catAnimation);
 		        
@@ -98,12 +104,67 @@ scene.addEventListener("click", () => {
     }, 120);
     	
     }
- 	//second click
- 	else if (sceneStep === 2) {
- 	speechBubble.style.display = "block";
+	// =========================================
+    	// SECOND CLICK
+        // speech bubble + cat paws
+        // =========================================
 
-        // Don't trigger the bubble again
-        sceneStep = 3;
- 	}
-	
+ 	else if (sceneStep === 2) {
+ 	
+ 	animationRunning = true;
+ 	sceneStep = 3;
+ 	
+ 	// -----------------------------------------
+        // SHOW RIGHT BUBBLE 
+        // -----------------------------------------
+ 	speechBubbleRight.style.display = "block";
+
+        // Wait 2.5 second
+        setTimeout(() => {
+
+            // Hide right bubble
+            speechBubbleRight.style.display = "none";
+            
+            // Wait 1 second before showing 1 arm
+            setTimeout(() => {
+
+            	  // Hide the original cat
+                cat.style.display = "none";
+
+                // Show cat with 1 arm
+                cat1Arm.style.display = "block";
+
+            
+             	  // Wait 2.5 seconds before showing left bubble
+                   setTimeout(() => {
+            
+            		// Show left bubble
+            		   speechBubbleLeft.style.display = "block";
+
+            		// Wait another 1.5 second
+            		   setTimeout(() => {
+            			// Hide left bubble
+                		speechBubbleLeft.style.display = "none";
+
+                		// Hide 1-arm cat
+                        	cat1Arm.style.display = "none";
+
+	                        // Show 2-arm cat
+        	                cat2Arm.style.display = "block";
+
+                		// Sequence finished
+                		animationRunning = false;
+                		sceneStep = 4;
+ 			}, 1500);
+
+                }, 2500);
+
+            }, 1500);
+
+        }, 2500);
+    }
 });
+
+
+
+
